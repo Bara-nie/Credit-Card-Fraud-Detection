@@ -1,0 +1,40 @@
+install.packages('ranger')
+install.packages('caret')
+install.packages('data.table')
+library(ranger)
+library(caret)
+
+library(data.table)
+dataset = read.csv('creditcard.csv.')
+
+dim(dataset)
+head(dataset)
+tail(dataset)
+table(dataset$Class)
+summary(dataset$Amount)
+names(dataset)
+var(dataset$Amount)
+sd(dataset$Amount)
+
+dataset$Amount=scale(dataset$Amount)
+NewData=dataset[,-c(1)]
+head(NewData)
+
+library(caTools)
+set.seed(123)
+data_sample = sample.split(NewData$Class,SplitRatio=0.80)
+train_data = subset(NewData,data_sample==TRUE)
+test_data = subset(NewData,data_sample==FALSE)
+dim(train_data)
+dim(test_data)
+
+Logistic_Model=glm(Class~.,test_data,family=binomial())
+summary(Logistic_Model)
+plot(Logistic_Model)
+library(pROC)
+
+lr.predict <- predict(Logistic_Model,train_data, probability = TRUE)
+auc.gbm = roc(test_data, lr.predict, plot = TRUE, col = "blue")
+library(pROC)
+lr.predict <- predict(Logistic_Model,train_data, probability = TRUE)
+auc.gbm = roc_(test_data$Class, lr.predict, plot = TRUE, col = "blue")
